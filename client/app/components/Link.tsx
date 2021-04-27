@@ -13,27 +13,18 @@ interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 
   href: string;
   target?: never;
 }
-
-type ExternalLinkProps = LinkProps & { children: React.ReactText };
-
-function ExternalLink(props: ExternalLinkProps) {
-  return <ExternalIconText wrapper={Link.Component} target="_blank" rel="noopener noreferrer" {...props} />;
-}
 function Link(props: LinkProps) {
-  const areChildrenText = typeof props.children === "object";
-  const isURLExternal = !isLocalURL(props.href);
-
-  if (isURLExternal && !areChildrenText) {
-    console.warn(
-      "External link was rendered as regular link. Please provide `ReactText` as children to render as external."
-    );
-  }
-
-  return isURLExternal && areChildrenText ? (
-    <ExternalLink {...(props as ExternalLinkProps)} />
-  ) : (
+  return isLocalURL(props.href) ? (
     <Link.Component {...props} />
+  ) : (
+    <Link.Component target="_blank" rel="noopener noreferrer" {...props} />
   );
+}
+
+type ExternalIconLinkProps = LinkProps & { children: React.ReactText };
+
+export function ExternalIconLink(props: ExternalIconLinkProps) {
+  return <ExternalIconText wrapper={Link} {...props} />;
 }
 
 // Ant Button will render an <a> if href is present.
